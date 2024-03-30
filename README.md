@@ -14,7 +14,7 @@ Follow these steps to install ListApp;
 
 Clone the repository;
 
-git clone https;//github.com/yourusername/listapp.git
+git clone https; https://github.com/kdfunk/listApp.git
 cd listapp
 
 Install the npm packages;
