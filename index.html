@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ListApp</title>
+    </head>
+    <body>
+      <h1 class="list-form-header">List</h1>
+      <form class="list-form" autocomplete="off" id="listForm">
+          <input class="list-input" id="listAdd-input" type="text" name="listAdd" />
+          <button class="list-button" type="submit" role="button">Add</button>
+      </form>
+      <h3 class="list-listAdd">Added List: <span id="listAdd-output" class="listAdd"></span></h3>
+
+      <script>
+       // Insecure versions vulnerabilities
+
+if (document.readyState == 'loading') {
+    document.addEventListener('DOMContentLoaded', ready);
+} else {
+    ready();
+}
+
+function ready() {
+    // Directly using user input without sanitization
+    var query = new URL(window.location).searchParams.get('listAdd');
+    document.getElementById('listAdd-input').value = query;
+
+    // Using innerHTML with user-supplied
+    document.getElementById('listAdd-output').innerHTML = query;
+}
+
+// Storing information 
+document.cookie = "username=run@cool.com";
+document.cookie = "password=password";
+      </script>
+
+    </body>
+</html>
