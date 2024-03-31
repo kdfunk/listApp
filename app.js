@@ -1,16 +1,36 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const helmet = require('helmet'); // installed helmet via npm
 
 const app = express();
 const port = 3000;
 
-// Serve the index.html file
+// Helmet for setting HTTP security headers
+app.use(helmet());
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://trusted.cdn.com"],
+      styleSrc: ["'self'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https://trusted.image-source.com"],
+      connectSrc: ["'self'", "https://api.trusted-service.com"],
+      frameAncestors: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  })
+);
+
+// Securely index.html file and set cookies
 app.get('/', (req, res) => {
+    res.cookie('username', 'run@cool.com', { secure: true, httpOnly: true });
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Serve static files from the "public" directory
+// Static files from the "public" directory
 app.use(express.static('public'));
 
 // Body parsing middleware
@@ -30,32 +50,24 @@ const db = new sqlite3.Database('./mylist.db', (err) => {
     }
 });
 
-
-// Server-side app.js
-
+// Securely list-items 
 app.get('/list-items', (req, res) => {
     const searchTerm = req.query.term;
-    const db = new sqlite3.Database('mylist.db');
-    
-    // Insecure SQL query 
-    const sql = `SELECT * FROM items WHERE name LIKE '%${listTerm}%'`;
-
-    db.all(sql, [], (err, rows) => {
-      if (err) {
-        res.status(500).send("Error executing query");
-      } else {
-        res.json(rows);
-      }
+    const sql = `SELECT * FROM items WHERE name LIKE ?`;
+    db.all(sql, [`%${searchTerm}%`], (err, rows) => {
+        if (err) {
+            res.status(500).send("Error executing query");
+        } else {
+            res.status(200).json(rows);
+        }
     });
-    db.close();
 });
 
-
-// Endpoint to get all items
+// Endpoint to get all items securely
 app.get('/get-items', (req, res) => {
     db.all(`SELECT * FROM items`, [], (err, rows) => {
         if (err) {
-            res.status(500).send(err.message);
+            res.status(500).send("Error retrieving items");
         } else {
             res.status(200).json({ items: rows });
         }

@@ -1,4 +1,4 @@
-// Insecure versions vulnerabilities
+// Secure versions vulnerabilities
 
 
 // Setting cookies 
@@ -21,5 +21,5 @@ function ready() {
     document.getElementById('listAdd-input').value = query;
 
     // Using innerHTML with user input
-    document.getElementById('listAdd-output').innerHTML = query;
+    document.getElementById('listAdd-output').textContent = query;
 }

@@ -19,6 +19,7 @@ cd listapp
 
 Install the npm packages;
 
+npm install helmet
 npm install
 
 Configuration
